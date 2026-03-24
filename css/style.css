@@ -111,6 +111,7 @@ section {
     border: var(--border);
     padding: 24px;
     border-radius: 2px;
+    box-shadow: 4px 4px 0px var(--color-accent);
 }
 
 /* Hero Section */
@@ -120,11 +121,16 @@ section {
     flex-direction: column;
     margin: 0 auto;
 }
-.hero-content {
-    flex-grow: 1;
+.hero-box {
+    margin: auto 0;
+    min-height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+.hero-content {
+    display: flex;
+    flex-direction: column;
 }
 .hero-title {
     font-size: clamp(2.2rem, 6vw, 4rem);
