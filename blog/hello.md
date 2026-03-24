@@ -1,6 +1,6 @@
 ---
 title: "Hello World"
-date: "2025-01-01"
+date: "24.03.2026"
 lang: "en"
 summary: "This is the first post on this blog."
 ---
