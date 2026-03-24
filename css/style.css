@@ -9,8 +9,8 @@
     --max-width: 760px;
     --border: 1.5px solid var(--color-text);
     --color-hover-accent: var(--color-accent);
-    --color-code-bg: #f0f0f0;
-    --color-code-text: #313131;
+    --color-code-bg: #f5f5f5;
+    --color-code-text: #212121;
 }
 
 :root[data-theme="dark"] {
@@ -21,8 +21,8 @@
     --color-soft: #febece;
     --border: 1.5px solid var(--color-text);
     --color-hover-accent: var(--color-soft);
-    --color-code-bg: #2e2e2e;
-    --color-code-text: #e8e8e8;
+    --color-code-bg: #0d0d0d;
+    --color-code-text: #ffffff;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -59,8 +59,8 @@ button {
 button:hover { color: var(--color-hover-accent); }
 
 code, pre {
-    background: var(--color-code-bg, #f0f0f0);
-    color: var(--color-code-text, #313131);
+    background: var(--color-code-bg, #f5f5f5) !important;
+    color: var(--color-code-text, #212121) !important;
     padding: 0.2rem 0.4rem;
     border-radius: 2px;
     font-size: 0.9em;
