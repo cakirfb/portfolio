@@ -21,23 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchBlogIndex() {
     try {
-        const res = await fetch('/blog/index.json');
+        // Use relative path to work in subdirectories or local file systems
+        const res = await fetch('blog/index.json');
         if (!res.ok) throw new Error('Cannot fetch index.json');
         return await res.json();
     } catch (e) {
-        console.error(e);
+        console.error('Error fetching blog index:', e);
         return [];
     }
 }
 
 async function fetchPost(fileUrl) {
     try {
-        const res = await fetch(fileUrl);
-        if (!res.ok) throw new Error('Cannot fetch post');
+        // Ensure the path doesn't have a leading slash if we are using relative paths
+        const cleanUrl = fileUrl.startsWith('/') ? fileUrl.substring(1) : fileUrl;
+        const res = await fetch(cleanUrl);
+        if (!res.ok) throw new Error('Cannot fetch post: ' + cleanUrl);
         const text = await res.text();
         return parsePost(text);
     } catch (e) {
-        console.error(e);
+        console.error('Error fetching post:', e);
         return null;
     }
 }
@@ -124,22 +127,43 @@ function createCardHTML(slug, meta) {
     `;
 }
 
+// Helper to sort posts by date (Descending)
+function sortPosts(posts) {
+    return posts.sort((a, b) => {
+        const dateA = new Date(a.meta.date.split('.').reverse().join('-')); // Support DD.MM.YYYY
+        const dateB = new Date(b.meta.date.split('.').reverse().join('-'));
+        
+        // If normalization fails, try ISO
+        const finalA = isNaN(dateA) ? new Date(a.meta.date) : dateA;
+        const finalB = isNaN(dateB) ? new Date(b.meta.date) : dateB;
+        
+        return finalB - finalA;
+    });
+}
+
 async function loadBlogPreviews(containerId, limit) {
     const container = document.getElementById(containerId);
     if (!container) return;
     
     const index = await fetchBlogIndex();
-    const postsToLoad = index.slice(0, limit);
+    const allPosts = [];
     
-    let html = '';
-    for (const entry of postsToLoad) {
+    for (const entry of index) {
         const post = await fetchPost(entry.file);
         if (post) {
-            html += createCardHTML(entry.slug, post.meta);
+            allPosts.push({ slug: entry.slug, ...post });
         }
     }
     
-    container.innerHTML = html;
+    const sortedPosts = sortPosts(allPosts);
+    const postsToLoad = sortedPosts.slice(0, limit);
+    
+    let html = '';
+    for (const post of postsToLoad) {
+        html += createCardHTML(post.slug, post.meta);
+    }
+    
+    container.innerHTML = html || '<p>No recent posts.</p>';
 }
 
 async function loadBlogList(containerId) {
@@ -149,17 +173,23 @@ async function loadBlogList(containerId) {
     const index = await fetchBlogIndex();
     const currentLang = document.documentElement.getAttribute('data-lang') || 'en';
     
-    // Header
     const titleEn = "All Posts";
     const titleTr = "Tüm Yazılar";
     let html = `<h2 class="section-title" data-en="${titleEn}" data-tr="${titleTr}">${currentLang === 'en' ? titleEn : titleTr}</h2>
                 <div class="content-box">`;
     
+    const allPosts = [];
     for (const entry of index) {
         const post = await fetchPost(entry.file);
         if (post) {
-            html += createCardHTML(entry.slug, post.meta);
+            allPosts.push({ slug: entry.slug, ...post });
         }
+    }
+    
+    const sortedPosts = sortPosts(allPosts);
+    
+    for (const post of sortedPosts) {
+        html += createCardHTML(post.slug, post.meta);
     }
     
     html += `</div>`;
