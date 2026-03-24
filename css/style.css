@@ -10,6 +10,15 @@
     --border: 1.5px solid #313131;
 }
 
+:root[data-theme="dark"] {
+    --color-bg: #1a1a1a;
+    --color-text: #e8e8e8;
+    --color-muted: #777777;
+    --color-accent: #4a9998;
+    --color-soft: #c9a0ac;
+    --border: 1.5px solid #444444;
+}
+
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
     background-color: var(--color-bg);
@@ -21,9 +30,16 @@ body {
 a {
     color: var(--color-text);
     text-decoration: none;
-    transition: color 150ms ease;
+    border-bottom: 1px solid transparent;
+    transition: all 150ms ease;
 }
-a:hover { color: var(--color-accent); }
+a:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+}
+.nav-item, .social-icon, .site-name a, .blog-card, .hamburger, .lang-toggle, .theme-toggle {
+    border-bottom: none !important;
+}
 
 button {
     font-family: inherit;
@@ -61,6 +77,10 @@ nav {
 }
 .nav-item {
     font-weight: 400;
+    padding-bottom: 2px;
+}
+.nav-item.active {
+    border-bottom: 2px solid var(--color-soft) !important;
 }
 .lang-toggle {
     border: var(--border);
@@ -71,6 +91,23 @@ nav {
 .lang-toggle:hover {
     background: var(--color-text);
     color: var(--color-bg);
+}
+
+.theme-toggle {
+    border: var(--border);
+    padding: 4px 8px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.theme-toggle:hover {
+    background: var(--color-text);
+    color: var(--color-bg);
+}
+.theme-toggle svg {
+    width: 18px;
+    height: 18px;
 }
 
 .hamburger {
@@ -150,6 +187,14 @@ section {
     margin-top: 1.5rem;
     line-height: 1.8;
 }
+.cursor {
+    color: var(--color-accent);
+    animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
 .hero-socials {
     margin-top: 2.5rem;
     display: flex;
@@ -169,6 +214,25 @@ section {
 .hero-divider {
     border: none;
     border-top: 1px solid var(--color-muted);
+}
+
+/* Contact Section */
+.contact-text {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+.contact-socials {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+.social-icon {
+    color: var(--color-muted);
+    transition: color 150ms ease;
+    display: flex;
+}
+.social-icon:hover {
+    color: var(--color-accent);
 }
 
 /* About Section */
@@ -337,9 +401,11 @@ section {
 footer {
     border-top: var(--border);
     max-width: var(--max-width);
-    margin: 80px auto 40px;
-    padding: 20px;
+    margin: 80px auto 0;
+    padding: 2rem 0;
     text-align: center;
+    font-size: 0.8rem;
+    color: var(--color-muted);
 }
 
 /* Mobile */
