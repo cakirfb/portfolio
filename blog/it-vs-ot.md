@@ -1,8 +1,5 @@
-\---
-
-## title: "IT vs. OT: Neden Aynı Kurallar İşlemiyor?"
-
-
+---
+title: "IT vs. OT: Neden Aynı Kurallar İşlemiyor?"
 date: "2026-03-24"
 lang: "tr"
 summary: "Ofis ağları ile endüstriyel sistemlerin temel mimari ve öncelik farklarını keşfediyoruz."
@@ -10,50 +7,70 @@ summary: "Ofis ağları ile endüstriyel sistemlerin temel mimari ve öncelik fa
 
 ## Giriş
 
-Bilgisayar mühendisliği son sınıf öğrencisi olarak endüstriyel kontrol sistemleri (ICS) ve OT güvenliği üzerine çalışırken fark ettiğim en çarpıcı şey şu: IT ve OT dünyaları aynı dili konuşmuyor. Ofiste çalışan bir sunucuyla fabrikadaki bir PLC'yi aynı güvenlik politikalarıyla yönetmeye çalışmak, balık tutma oltasıyla vinç kullanmaya benziyor. İkisi de "kaldırma" işi yapıyor ama yaklaşımlar tamamen farklı.
+Siber güvenlik denilince çoğu zaman aklımıza veri ihlalleri, fidye yazılımları ya da sızdırılan kimlik bilgileri gelir. Bu çerçeve kurumsal IT dünyası için nispeten doğru olabilir. Ancak bir endüstriyel tesis düşünün: bir petrokimya rafinerisi, bir nükleer santral, bir su arıtma istasyonu. Bu ortamlarda bir güvenlik açığının bedeli bir veri kaybıyla ölçülmez. Bedelini insanlar öder.
 
-Bu yazıda, IT (Information Technology) ve OT (Operational Technology) sistemlerinin neden farklı önceliklere sahip olduğunu ve bu farkın siber güvenlik stratejilerine nasıl yansıdığını inceleyeceğim.
+Son yıllarda OT (Operational Technology) ve IT ağlarının birbirine yakınsamasıyla birlikte bu tesislerde siber tehdit yüzeyi dramatik biçimde genişledi. Ben de bilgisayar mühendisliği eğitimimin son yılında, özellikle ICS/OT siber güvenliği üzerine yoğunlaşırken şu soruyla yüzleştim: **Fiziksel emniyet, dijital güvenlik olmadan gerçekten mümkün mü?** Bu yazıda bu soruya hem teknik hem de felsefi bir perspektiften yanıt arıyorum.
 
-## CIA vs. Başka Bir CIA
+## SIS Nedir ve Neden Kritiktir?
 
-IT dünyasında güvenliğin temel ilkeleri CIA Triad ile özetlenir: Confidentiality (gizlilik), Integrity (bütünlük), Availability (erişilebilirlik). Bu sıralama tesadüf değil. Ofis ağlarında en kritik varlık veridir ve bu verinin gizliliği her şeyden önemlidir.
+`SIS` (Safety Instrumented System), endüstriyel süreçlerde tehlikeli durumların önüne geçmek için tasarlanmış bağımsız bir güvenlik katmanıdır. Bir reaktördeki basınç eşiği aşıldığında otomatik olarak devreye giren sistem, bir kimyasal tankın taşmasını önleyen acil kapatma mekanizması ya da bir gaz sızıntısını algılayıp tesisi emniyetli bir duruma getiren kontrol zinciri — bunların hepsi `SIS` kapsamındadır.
 
-OT dünyasında ise öncelikler tam tersi sıralanır: Availability, Integrity, Confidentiality. Bir petrokimya tesisinde reaktörü kontrol eden sistemin 7/24 çalışması gerekir. O sistemin verilerinin şifrelenmesi önemlidir ama önce durmaması gerekir. Bir güvenlik yaması uygulamak için üretimi durdurmak, günde yüzbinlerce dolarlık kayıp demektir.
+`IEC 61511` standardı, bu sistemleri `SIL` (Safety Integrity Level) adı verilen seviyelere göre sınıflandırır. `SIL 1`'den `SIL 4`'e uzanan bu skala, bir güvenlik fonksiyonunun ne kadar güvenilir olduğunu tanımlar. Geleneksel mühendislik anlayışında `SIS`, fiziksel süreçlerden ve kontrol sistemlerinden (`BPCS` — Basic Process Control System) tamamen izole edilmiş kabul edilirdi. Fikir basitti: izolasyon, koruma demektir.
 
-## Yama Yönetimi
+Ama bu fikir artık geçerliliğini yitiriyor.
 
-IT departmanlarında yama yönetimi rutin bir iştir. Salı günü Microsoft yamaları gelir, sistemler yeniden başlatılır, hayat devam eder. Kullanıcılar birkaç dakika bekler, kimse ölmez.
+## Convergence: İki Dünyanın Tehlikeli Yakınlaşması
 
-OT dünyasında ise bir SCADA sistemine yama uygulamak tam bir operasyondur:
+Modernleşme baskısı, maliyet optimizasyonu ve uzaktan izleme ihtiyacı; OT sistemlerini giderek daha fazla IT altyapısına bağlamaya zorluyor. Eskiden hava boşluğuyla (`air-gap`) korunan sistemler artık kurumsal ağlara, bulut platformlarına ve uzaktan erişim çözümlerine entegre ediliyor.
 
+Bu `convergence` (yakınsama) süreci verimliliği artırıyor, ancak beraberinde köklü bir mimari çelişki getiriyor: IT güvenliğinin temel öncelikleri **gizlilik, bütünlük ve erişilebilirlik** (`CIA triad`) iken, OT güvenliğinde bu öncelikler tersine dönüyor. Bir endüstriyel sistemde **erişilebilirlik ve bütünlük** ön plandadır; bir güvenlik yamalaması için sistemi durdurmak mümkün olmayabilir, çünkü durmak demek tehlike demektir.
 
+`SIS` katmanı da bu yakınsamadan nasibini alıyor. Pek çok modern `SIS`, artık `OPC UA` veya `Modbus TCP` gibi endüstriyel protokollerle kurumsal ağlara veri gönderiyor. Bu bağlantılar, denetim ve raporlama için değerlidir; ancak aynı zamanda saldırı yüzeyi oluşturur.
 
-* Üretim durur (yılda 2-3 planlı bakım penceresi varsa şanslısınız)
-* Yama, 15-20 yıllık eski donanımla uyumlu mu test edilir
-* Risk değerlendirmesi yapılır: Yama riskli mi, yoksa yamamamak mı daha riskli?
-* Bir şeyler ters giderse yedek sistemler hazır mı kontrol edilir
+## Triton/TRISIS: Bir Kâbus Senaryosu
 
-Birçok endüstriyel tesiste Windows XP veya Windows 7 çalıştıran sistemler hâlâ aktif. Neden? Çünkü o sistemler çalışıyor ve değiştirmenin maliyeti çok yüksek. IT perspektifinden bakınca delilik gibi görünür ama OT perspektifinden bakınca mantıklıdır: eğer bir sistem izole edilmiş ve saldırı yüzeyi minimize edilmişse, eski işletim sistemi düşündüğünüz kadar büyük bir risk olmayabilir.
+2017 yılında Orta Doğu'daki bir petrokimya tesisinde keşfedilen `TRITON` (ya da `TRISIS`) zararlı yazılımı, siber güvenlik tarihinin en ürkütücü örneklerinden biridir. Bu kötü amaçlı yazılım doğrudan `Triconex` marka `SIS` donanımını hedef almış; güvenlik katmanını devre dışı bırakmaya çalışmıştır.
 
-## Uptime Yetersizliği 
+Saldırganların amacı verileri çalmak değildi. Amaç, güvenlik sistemini etkisiz kılarak fiziksel bir felakete zemin hazırlamaktı. Bir programlama hatası nedeniyle sistemler `safe state`'e geçti ve tesis beklenmedik biçimde kapandı — bu sayede büyük bir felaket önlendi. Ama tasarlanan şey bir veri ihlali değil, patlamaydı.
 
-IT sistemlerinde %99.9 uptime iyi bir hedeftir. Yılda 8.76 saat kesinti kabul edilebilir sayılır. Email sunucunuz birkaç saat çökerse, kullanıcılar şikayet eder ama dünya dönmeye devam eder.
+Bu olay bana şunu net biçimde gösterdi: **Siber güvenlik, bir noktada insanların fiziksel güvenliğiyle örtüşüyor.** `SIS` artık yalnızca bir mühendislik katmanı değil, bir savunma hattı.
 
-OT sistemlerinde ise %99.99+ beklenir. Bazı kritik altyapılarda (enerji, su arıtma, petrokimya) hedef %99.999 veya daha iyisidir. Çünkü bir saat kesinti, sadece para kaybı değil, insan hayatını veya çevreyi tehlikeye atabilir.
+## Defense-in-Depth: Katmanlı Güvenlik Mimarisi
 
-Bu yüzden OT sistemlerinde redundancy (yedekleme) mimari düzeyinde düşünülür. Dual power supply, hot-standby kontrolörler, failover mekanizmaları standart beklentilerdir. IT dünyasında "high availability" özel bir gereksinim iken, OT'de temel varsayımdır.
+Peki bu tehdide karşı nasıl bir mimari inşa edilmeli? Endüstriyel güvenlikte en olgun yaklaşım `defense-in-depth` modelidir. Bu model, tek bir güvenlik önlemine güvenmek yerine katmanlı bir savunma anlayışını benimser.
 
-## Protokoller ve Legacy Sistemler
+`IEC 62443` standardı bu modeli OT bağlamında çerçeveler. Ağ segmentasyonu, `DMZ` (Demilitarized Zone) kullanımı, güvenli uzaktan erişim protokolleri (`VPN`, `jump server`) ve `SIS` ile `BPCS` arasındaki sıkı ayrım bu mimarinin temel bileşenleridir.
 
-IT ağları modern protokollerle çalışır: HTTPS, TLS 1.3, OAuth2. Güvenlik varsayılan olarak gelir.
+Özellikle şu prensipler kritik önem taşır:
 
-OT ağlarında ise Modbus, DNP3, Profinet, OPC gibi protokoller kullanılır. Bu protokollerin çoğu 1970-80'lerde tasarlanmıştır ve hiçbir güvenlik özelliği içermez. Şifreleme yok, kimlik doğrulama yok. Neden? Çünkü o zamanlar bu sistemler izole ortamlarda çalışıyordu. Fabrikanın dışından kimse erişemezdi.
+### Ağ Segmentasyonu ve Zone Modeli
 
-Bugün ise Endüstri 4.0 ve IoT ile bu sistemler artık internete bağlanıyor. Eski protokoller güvensiz ama değiştirilmeleri neredeyse imkânsız. Çözüm? Segmentasyon. OT ağlarını IT ağlarından firewall, DMZ ve unidirectional gateway kullanarak ayırmak.
+`ISA/IEC 62443`'ün önerdiği zone-conduit modeli, endüstriyel ağı güven seviyelerine göre bölgelere ayırır. `SIS`, mümkün olan en kısıtlı zone içinde konumlandırılmalı; bu zone'a erişim yalnızca zorunlu kondüitler üzerinden ve sıkı denetimle sağlanmalıdır.
 
-### Sonuç: Farklı Dünyalar, Farklı Kurallar
+### Güvenli Yazılım Geliştirme ve Firmware Bütünlüğü
 
-IT ve OT sistemlerini aynı kurallarla yönetmeye çalışmak, her iki tarafı da güvensiz bırakır. IT'de işleyen bir güvenlik politikası, OT'de operasyonel felakete yol açabilir. Tersine, OT'nin "çalışıyorsa dokunma" yaklaşımı IT dünyasında sürdürülemez risk yaratır.
+`SIS` donanımlarındaki `firmware` güncellemeleri, doğrulanmış kanallar üzerinden yapılmalı ve imza doğrulaması zorunlu tutulmalıdır. `TRITON` saldırısında saldırganlar `TriStation` protokolünü tersine mühendislikle çözümleyerek `SIS` kontrolörlerine kötü amaçlı kod yükleyebildi. Bu, tedarik zinciri güvenliğinin ne kadar kritik olduğunu gözler önüne seriyor.
 
-Gelecekte bu iki dünyanın birleşmesi kaçınılmaz ama bu birleşme ancak karşılıklı anlayış ve hibrid stratejiler ile gerçekleşebilir.
+### Anomali Tespiti ve OT-Spesifik Monitoring
 
+Klasik `IDS` (Intrusion Detection System) çözümleri OT ortamlarında yetersiz kalır, çünkü endüstriyel protokolleri anlamazlar. `Claroty`, `Dragos` veya `Nozomi Networks` gibi OT-spesifik güvenlik platformları, `Modbus`, `DNP3`, `EtherNet/IP` gibi protokolleri anlayarak anormal davranışları tespit edebilir.
+
+## Güvenlik mü, Emniyet mi? Disiplinlerin Felsefi Yakınlaşması
+
+İngilizce'de `security` ve `safety` ayrı kavramlardır. Türkçe'de her ikisi de çoğu zaman "güvenlik" olarak çevrilir — bu bir eksiklik değil, belki de bir gerçekliğin dile yansımasıdır.
+
+`Safety`, kazalara karşı korumayı ifade eder; kasıtsız arızalar, insan hataları, süreç sapmaları. `Security` ise kasıtlı, kötü niyetli tehditlere karşı korumayı. Geleneksel olarak bu iki alan ayrı mühendislik disiplinleri tarafından ele alınırdı. Güvenlik mühendisleri `HAZOP` (Hazard and Operability Study) gibi araçlarla çalışırken, siber güvenlik mühendisleri tehdit modelleme ve sızma testleriyle ilgilenirdi.
+
+Ama `TRITON` gibi saldırılar bize şunu gösterdi: **Kasıtlı bir siber saldırı, kasıtsız bir süreç arızasıyla aynı fiziksel sonucu doğurabilir.** Bu nedenle `SIS` tasarımı artık siber tehditleri de kapsayan bir tehdit modeli gerektiriyor. `IEC 61511`'in 2016 revizyonu bu gerçeği kabul ederek `cyber security risk assessment`'ı `safety lifecycle`'ın bir parçası hâline getirdi.
+
+Bu felsefi yakınlaşma bence son derece önemli. Artık bir `SIS` mühendisi siber tehditleri bilmeden eksik kalıyor; bir OT güvenlik uzmanı da süreç güvenliğini anlamadan yetersiz.
+
+## Yapay Zeka ve Geleceğin Tehditleri
+
+Kariyerimi hem ICS/OT güvenliği hem de yapay zeka güvenliği üzerine şekillendirmeye çalışırken şunu fark ettim: bu iki alan giderek birbirine yaklaşıyor. Endüstriyel sistemlere entegre edilen `ML` tabanlı anomali tespit motorları yeni bir saldırı yüzeyi oluşturuyor. Bir saldırgan, modeli aldatacak şekilde tasarlanmış `adversarial` girdilerle güvenlik sistemini kör edebilir.
+
+Henüz bu tehdidin gerçek dünya örneklerini çok az gördük; ancak OT ortamlarında yapay zeka kullanımı yaygınlaştıkça bu risk de büyüyecek. **Güvenli yapay zeka** ile **güvenli endüstriyel sistemler** artık ayrı konular değil.
+
+---
+
+Fiziksel emniyet, dijital güvenlik olmadan mümkün değil — en azından birbirine bağlı sistemlerin hâkim olduğu modern endüstriyel dünyada. `SIS` bir varoluş nedeniyle tasarlanmıştır: işler ters gittiğinde insanları korumak. Ama bu koruma katmanı kendisi savunmasız hâle gelirse, tüm mimari çöker. Sormaya devam etmemiz gereken soru şu: Güvenlik mühendisleri ve siber güvenlik uzmanları gerçekten aynı dili konuşuyor mu?
