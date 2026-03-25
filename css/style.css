@@ -1,4 +1,7 @@
 /* css/style.css */
+html {
+    scroll-behavior: smooth;
+}
 :root {
     --color-bg: #fafafa;
     --color-text: #313131;
@@ -31,6 +34,7 @@ body {
     color: var(--color-text);
     font-family: var(--font-main);
     line-height: 1.6;
+    padding-top: 73px;
 }
 
 a {
@@ -83,6 +87,12 @@ pre code {
 nav {
     border-bottom: var(--border);
     padding: 20px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: var(--color-bg);
 }
 .nav-container {
     max-width: var(--max-width);
@@ -163,6 +173,7 @@ section {
     border-bottom: var(--border);
     padding-bottom: 8px;
     margin-bottom: 32px;
+    scroll-margin-top: 100px;
 }
 .content-box {
     border: var(--border);
