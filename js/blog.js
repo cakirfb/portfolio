@@ -152,7 +152,7 @@ window.addEventListener('popstate', (event) => {
         loadSinglePost(postSlug, 'blog-list-container');
     } else {
         // Restore default SEO meta tags when going back to list
-        updateSEO({ title: 'Blog', summary: 'Cybersecurity Researcher Faruk Berkan Çakır\\'s Blog' });
+        updateSEO({ title: 'Blog', summary: "Cybersecurity Researcher Faruk Berkan Çakır's Blog" });
         loadBlogList('blog-list-container');
     }
 });
@@ -162,7 +162,7 @@ function handleBackClick(event) {
     
     event.preventDefault();
     window.history.pushState({}, '', 'blog.html');
-    updateSEO({ title: 'Blog', summary: 'Cybersecurity Researcher Faruk Berkan Çakır\\'s Blog' });
+    updateSEO({ title: 'Blog', summary: "Cybersecurity Researcher Faruk Berkan Çakır's Blog" });
     loadBlogList('blog-list-container');
 }
 
