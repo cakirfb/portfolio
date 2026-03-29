@@ -71,6 +71,12 @@ function parsePost(rawText) {
 }
 
 function parseMarkdown(md) {
+    // If marked is available, use it for robust parsing
+    if (typeof marked !== 'undefined') {
+        return marked.parse(md);
+    }
+
+    // Fallback simple parsing if marked didn't load
     let html = md;
 
     // Code blocks
@@ -116,7 +122,7 @@ function parseMarkdown(md) {
 
 function createCardHTML(slug, meta) {
     return `
-        <a href="blog.html?post=${slug}" class="blog-card">
+        <a href="blog.html?post=${slug}" class="blog-card" onclick="handlePostClick(event, '${slug}')">
             <div class="blog-card-meta">
                 <span class="blog-card-date">${meta.date}</span>
                 <span class="blog-card-lang ${meta.lang}">${meta.lang.toUpperCase()}</span>
@@ -125,6 +131,38 @@ function createCardHTML(slug, meta) {
             <p class="blog-card-summary">${meta.summary}</p>
         </a>
     `;
+}
+
+function handlePostClick(event, slug) {
+    // Only intercept clicks that are plain left-clicks (not middle-click, or with ctrl/cmd)
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    
+    event.preventDefault();
+    window.history.pushState({ post: slug }, '', `blog.html?post=${slug}`);
+    loadSinglePost(slug, 'blog-list-container');
+}
+
+// Handle browser Back/Forward buttons
+window.addEventListener('popstate', (event) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const postSlug = urlParams.get('post');
+    
+    if (postSlug) {
+        loadSinglePost(postSlug, 'blog-list-container');
+    } else {
+        // Restore default SEO meta tags when going back to list
+        updateSEO({ title: 'Blog', summary: 'Cybersecurity Researcher Faruk Berkan Çakır\\'s Blog' });
+        loadBlogList('blog-list-container');
+    }
+});
+
+function handleBackClick(event) {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    
+    event.preventDefault();
+    window.history.pushState({}, '', 'blog.html');
+    updateSEO({ title: 'Blog', summary: 'Cybersecurity Researcher Faruk Berkan Çakır\\'s Blog' });
+    loadBlogList('blog-list-container');
 }
 
 // Helper to sort posts by date (Descending)
@@ -196,6 +234,41 @@ async function loadBlogList(containerId) {
     container.innerHTML = html;
 }
 
+function updateSEO(meta) {
+    if (!meta) return;
+    
+    // Update Page Title
+    const siteName = "Faruk Berkan Çakır";
+    document.title = meta.title ? `${meta.title} - ${siteName}` : `Blog - ${siteName}`;
+    
+    // Update Meta Description
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.name = "description";
+        document.head.appendChild(metaDesc);
+    }
+    metaDesc.content = meta.summary || `Cybersecurity Researcher ${siteName}'s Blog`;
+    
+    // Update Open Graph Title
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (!ogTitle) {
+        ogTitle = document.createElement('meta');
+        ogTitle.setAttribute('property', 'og:title');
+        document.head.appendChild(ogTitle);
+    }
+    ogTitle.content = meta.title ? `${meta.title} - ${siteName}` : `Blog - ${siteName}`;
+
+    // Update Open Graph Description
+    let ogDesc = document.querySelector('meta[property="og:description"]');
+    if (!ogDesc) {
+        ogDesc = document.createElement('meta');
+        ogDesc.setAttribute('property', 'og:description');
+        document.head.appendChild(ogDesc);
+    }
+    ogDesc.content = meta.summary || `Cybersecurity Researcher ${siteName}'s Blog`;
+}
+
 async function loadSinglePost(slug, containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -213,12 +286,15 @@ async function loadSinglePost(slug, containerId) {
         return;
     }
     
+    // Update SEO dynamically
+    updateSEO(post.meta);
+    
     const currentLang = document.documentElement.getAttribute('data-lang') || 'en';
     const backEn = "&larr; Back to blog";
     const backTr = "&larr; Bloga dön";
     
     container.innerHTML = `
-        <a href="blog.html" class="post-back-link" data-en="${backEn}" data-tr="${backTr}">${currentLang === 'en' ? backEn : backTr}</a>
+        <a href="blog.html" class="post-back-link" onclick="handleBackClick(event)" data-en="${backEn}" data-tr="${backTr}">${currentLang === 'en' ? backEn : backTr}</a>
         <div class="content-box single-post">
             <div class="post-header">
                 <h1 class="post-title">${post.meta.title}</h1>
