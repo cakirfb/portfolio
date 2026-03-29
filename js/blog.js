@@ -73,7 +73,8 @@ function parsePost(rawText) {
 function parseMarkdown(md) {
     // If marked is available, use it for robust parsing
     if (typeof marked !== 'undefined') {
-        return marked.parse(md);
+        // Some marked versions use marked.parse(), older/different builds use marked()
+        return typeof marked.parse === 'function' ? marked.parse(md) : marked(md);
     }
 
     // Fallback simple parsing if marked didn't load
